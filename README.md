@@ -1,99 +1,148 @@
-# Documentação do Projeto CRUD de Customers
+```markdown
+# 🧠 API REST de Gestão de Clientes
 
-## Visão Geral
-Este projeto é um CRUD (Create, Read, Update, Delete) que permite o gerenciamento de customers, incluindo o cadastro de contacts e users. A API é desenvolvida em Node.js com Express e utiliza Sequelize como ORM para interação com um banco de dados PostgreSQL. A autenticação é implementada com bcrypt para gerar tokens de acesso às rotas protegidas.
+Este é um projeto backend desenvolvido com **Node.js**, **Express** e **Sequelize**, que oferece uma API RESTful para gerenciar **clientes**, **contatos**, **usuários**, **sessões de login** e **upload de arquivos**.
 
-## Tecnologias Utilizadas
-- **Node.js** - Ambiente de execução JavaScript
-- **Express.js** - Framework para criação de APIs REST
-- **Sequelize** - ORM para interação com PostgreSQL
-- **PostgreSQL** - Banco de dados relacional
-- **bcrypt** - Biblioteca para hashing de senhas
-- **jsonwebtoken (JWT)** - Para autenticação e geração de tokens
+---
 
-## Estrutura do Projeto
+## 🚀 Funcionalidades
+
+- ✅ Autenticação JWT
+- ✅ CRUD de Clientes
+- ✅ CRUD de Contatos relacionados a Clientes
+- ✅ CRUD de Usuários
+- ✅ Upload de Arquivos com Multer
+- ✅ Proteção de rotas com middleware
+- ✅ Validações com Yup
+
+---
+
+## 📁 Estrutura de Pastas
+
 ```
-project-root/
-│-- src/
-│   ├── models/
+src/
+├── app/
 │   ├── controllers/
-│   ├── routes/
-│   ├── middlewares/
-│   ├── config/
-│   ├── app.js
-│-- database/
-│-- .env
-│-- package.json
+│   ├── models/
+├── config/
+│   ├── auth.js
+│   ├── database.js
+│   ├── multer.js
+├── database/
+│   ├── migrations/
+│   └── index.js
+├── tmp/               # Pasta para uploads temporários
+├── app.js             # Configurações do Express
+├── routes.js          # Todas as rotas da aplicação
+└── server.js          # Arquivo principal para iniciar o servidor
 ```
 
-## Configuração do Banco de Dados
-Crie um arquivo `.env` na raiz do projeto e adicione as credenciais do seu banco de dados PostgreSQL:
-```
-DB_NAME=meu_banco
-DB_USER=meu_usuario
-DB_PASS=minha_senha
-DB_HOST=localhost
-DB_DIALECT=postgres
-SECRET_KEY=minha_chave_secreta
-```
+---
 
-## Instalação e Execução
-1. Clone o repositório:
-   ```sh
-   git clone https://github.com/seu-repositorio.git
+## 📦 Instalação
+
+1. **Clone o repositório**
+   ```bash
+   git clone https://github.com/seu-usuario/seu-projeto.git
+   cd seu-projeto
    ```
-2. Instale as dependências:
-   ```sh
+
+2. **Instale as dependências**
+   ```bash
    npm install
    ```
-3. Execute as migrações do banco de dados:
-   ```sh
+
+3. **Configure o arquivo `.env`**
+   ```env
+   APP_SECRET=sua_chave_jwt
+   PORT=3333
+   DB_HOST=localhost
+   DB_USER=postgres
+   DB_PASS=senha
+   DB_NAME=seu_banco
+   ```
+
+4. **Configure o banco de dados com Sequelize**
+   ```bash
+   npx sequelize db:create
    npx sequelize db:migrate
    ```
-4. Inicie a aplicação:
-   ```sh
-   npm start
+
+5. **Inicie o servidor**
+   ```bash
+   npm run dev
    ```
 
-## Endpoints da API
+---
+
+## 🛠 Tecnologias Utilizadas
+
+- Node.js
+- Express
+- Sequelize + PostgreSQL
+- JWT (Autenticação)
+- Multer (Upload de arquivos)
+- Yup (Validação)
+- Sucrase + Nodemon (Ambiente de desenvolvimento)
+
+---
+
+## 🔐 Rotas Protegidas
+
+Após o login com `POST /sessions`, o token JWT deve ser enviado no header `Authorization` como:
+
+```
+Authorization: Bearer <seu_token>
+```
+
+---
+
+## 🧪 Exemplos de Endpoints
 
 ### Autenticação
-- **POST /auth/login** - Autentica um usuário e retorna um token JWT.
-  - Parâmetros:
-    ```json
-    {
-      "email": "user@email.com",
-      "password": "123456"
-    }
-    ```
-  - Resposta:
-    ```json
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI..."
-    }
-    ```
 
-### Customers
-- **POST /customers** - Cria um novo customer.
-- **GET /customers** - Retorna a lista de customers.
-- **GET /customers/:id** - Retorna os detalhes de um customer.
-- **PUT /customers/:id** - Atualiza um customer existente.
-- **DELETE /customers/:id** - Remove um customer.
-
-### Contacts
-- **POST /contacts** - Cria um novo contato associado a um customer.
-- **GET /contacts/:customerId** - Retorna os contatos de um customer.
-
-### Users
-- **POST /users** - Cria um novo usuário.
-- **GET /users** - Lista todos os usuários.
-
-## Middleware de Autenticação
-Todas as rotas protegidas exigem um token JWT no cabeçalho `Authorization`. Exemplo:
-```
-Authorization: Bearer <seu_token_jwt>
+```http
+POST /sessions
+Body: { "email": "", "password": "" }
 ```
 
-## Considerações Finais
-Este projeto serve como base para sistemas de gestão de customers e pode ser expandido conforme a necessidade. Caso precise de melhorias ou novas funcionalidades, sinta-se à vontade para contribuir!
+### Clientes
 
+```http
+GET /customers
+POST /customers
+PUT /customers/:id
+DELETE /customers/:id
+```
+
+### Contatos
+
+```http
+GET /customers/:customerId/contacts
+POST /customers/:customerId/contacts
+PUT /customers/:customerId/contacts/:id
+DELETE /customers/:customerId/contacts/:id
+```
+
+### Upload de Arquivos
+
+```http
+POST /file
+Form-data: { file: <arquivo> }
+```
+
+---
+
+## 🧑‍💻 Scripts úteis
+
+- `npm run dev`: Inicia o servidor com Nodemon + Sucrase
+- `npx sequelize db:migrate`: Executa as migrations
+
+---
+
+## 📌 Observações
+
+- Certifique-se de que a pasta `tmp/` existe para upload de arquivos.
+- O middleware de autenticação está aplicado a todas as rotas após `/sessions`.
+
+---
